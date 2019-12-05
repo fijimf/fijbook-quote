@@ -30,7 +30,19 @@ object QuoteRoutes {
 
     HttpRoutes.of[F] {
       case GET -> Root / "random" =>
-        findQuote(0)
+        for {
+          q<-repo.randomQuote()
+          resp<-Ok(q)
+        } yield {
+          resp
+        }
+      case GET -> Root /"random"/ tag=>
+        for {
+          q<-repo.randomQuote(tag, 0.25)
+          resp<-Ok(q)
+        } yield {
+          resp
+        }
       case GET -> Root / "quote" / LongVar(id) =>
         findQuote(id)
     }
