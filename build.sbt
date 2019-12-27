@@ -13,7 +13,7 @@ lazy val root = (project in file("."))
   .settings(
     organization := "com.fijimf.deepfij",
     name := "fijbook-quote",
-    version := "1.0.0",
+    version := "1.0.1",
     scalaVersion := "2.12.8",
     buildInfoKeys := Seq[BuildInfoKey](name, version, scalaVersion, sbtVersion, buildInfoBuildNumber),
     buildInfoPackage := "com.fijimf.deepfij.quote",
