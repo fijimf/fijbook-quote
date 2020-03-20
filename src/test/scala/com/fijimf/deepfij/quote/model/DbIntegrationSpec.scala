@@ -16,6 +16,7 @@ import scala.collection.JavaConverters._
 import scala.util.{Failure, Success, Try}
 
 abstract class DbIntegrationSpec extends FunSpec with BeforeAndAfterAll with Matchers with doobie.scalatest.IOChecker {
+  val POSTGRES_DOCKER_IMAGE = "postgres:12.2"
 
   override val colors: Colors.Ansi.type = doobie.util.Colors.Ansi // just for docs
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContexts.synchronous)
@@ -35,7 +36,7 @@ abstract class DbIntegrationSpec extends FunSpec with BeforeAndAfterAll with Mat
   }
 
   def createDockerContainer(docker: DockerClient): IO[String] = IO {
-    docker.pull("postgres:latest")
+    docker.pull(POSTGRES_DOCKER_IMAGE)
 
     docker
       .listContainers(ListContainersParam.allContainers(true))
@@ -60,7 +61,7 @@ abstract class DbIntegrationSpec extends FunSpec with BeforeAndAfterAll with Mat
     val containerConfig: ContainerConfig = ContainerConfig
       .builder
       .hostConfig(hostConfig)
-      .image("postgres:latest")
+      .image(POSTGRES_DOCKER_IMAGE)
       .exposedPorts(s"$port/tcp")
       .env(s"POSTGRES_USER=$user", s"POSTGRES_PASSWORD=$password", s"POSTGRES_DB=$database")
       .build

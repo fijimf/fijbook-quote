@@ -8,7 +8,7 @@ class QuoteRepoSpec extends DbIntegrationSpec {
   val containerName = "quote-repo-spec"
   val port = "7375"
 
-  describe("Schedule repo ops") {
+  describe("Quote repo ops") {
     val repo = new QuoteRepo[IO](transactor)
     val newQuote1: Quote = Quote(0L, "QUOTE 1", "###", None, None)
     val newQuote2: Quote = Quote(0L, "QUOTE 2", "$$$", Some("tag"), None)
