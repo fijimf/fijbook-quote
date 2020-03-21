@@ -4,7 +4,7 @@ import cats.Applicative
 import cats.effect.Sync
 import cats.implicits._
 import org.http4s.circe.jsonEncoderOf
-import com.fijimf.deepfij.quote.services.QuoteRepo
+import com.fijimf.deepfij.quote.services.{QuoteOperations, QuoteRepo}
 import com.fijimf.deepfij.quote.util.ServerInfo
 import org.http4s.{EntityEncoder, HttpRoutes}
 import org.http4s.dsl.Http4sDsl
@@ -13,7 +13,7 @@ import org.slf4j.{Logger, LoggerFactory}
 object QuoteRoutes {
   val log: Logger = LoggerFactory.getLogger(QuoteRoutes.getClass)
 
-  def routes[F[_]](repo: QuoteRepo[F])(implicit F: Sync[F]): HttpRoutes[F] = {
+  def routes[F[_]](repo: QuoteOperations[F])(implicit F: Sync[F]): HttpRoutes[F] = {
 
     val dsl: Http4sDsl[F] = new Http4sDsl[F] {}
     import dsl._
@@ -76,7 +76,7 @@ object QuoteRoutes {
     }
   }
 
-  def healthcheckRoutes[F[_]](repo: QuoteRepo[F])(implicit F: Sync[F]): HttpRoutes[F] = {
+  def healthcheckRoutes[F[_]](repo: QuoteOperations[F])(implicit F: Sync[F]): HttpRoutes[F] = {
     val dsl: Http4sDsl[F] = new Http4sDsl[F] {}
     import dsl._
     HttpRoutes.of[F] {

@@ -9,7 +9,9 @@ import doobie.util.transactor.Transactor
 
 import scala.util.Random
 
-class QuoteRepo[F[_]](xa: Transactor[F])(implicit F: Sync[F]) {
+
+
+class QuoteRepo[F[_]](xa: Transactor[F])(implicit F: Sync[F]) extends QuoteOperations[F] {
 
   val me: MonadError[F, Throwable] = implicitly[MonadError[F, Throwable]]
   val nullQuote: Quote = Quote(-1L, "No quotes loaded", "", None, None)

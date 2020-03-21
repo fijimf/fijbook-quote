@@ -1,13 +1,31 @@
 package com.fijimf.deepfij.quote.model
 
+import cats.Applicative
+import cats.effect.Sync
 import doobie.implicits._
 import doobie.util.update.Update0
+import io.circe.generic.semiauto.{deriveDecoder, deriveEncoder}
+import io.circe.{Decoder, Encoder}
+import org.http4s.circe.{jsonEncoderOf, jsonOf}
+import org.http4s.{EntityDecoder, EntityEncoder}
+
 
 case class Quote(id: Long, text: String, source: String, tag: Option[String], link: Option[String]) {
 
 }
 
 object Quote {
+
+  implicit val quoteEncoder: Encoder.AsObject[Quote] = deriveEncoder[Quote]
+  implicit val quoteDecoder: Decoder[Quote] = deriveDecoder[Quote]
+
+  implicit def quoteEntityEncoder[F[_] : Applicative]: EntityEncoder[F, Quote] = jsonEncoderOf
+
+  implicit def quoteEntityDecoder[F[_] : Sync]: EntityDecoder[F, Quote] = jsonOf
+
+  implicit def lstQuoteEntityEncoder[F[_] : Applicative]: EntityEncoder[F, List[Quote]] = jsonEncoderOf
+
+  implicit def lstQuoteEntityDecoder[F[_] : Sync]: EntityDecoder[F, List[Quote]] = jsonOf
 
   object Dao extends AbstractDao {
     val cols: Array[String] = Array("id", "text", "source", "tag", "link")
