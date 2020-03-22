@@ -19,7 +19,7 @@ class QuoteRoutesSpec extends FunSpec {
     }
 
     override def insertQuote(a: Quote): IO[Quote] = IO {
-      a
+      a.copy(id=123L)
     }
 
     override def updateQuote(a: Quote): IO[Quote] = IO {
@@ -91,21 +91,23 @@ class QuoteRoutesSpec extends FunSpec {
       assert(response.status === Status.Ok)
       assert(response.as[Quote].map(_.text).unsafeRunSync()==="text1")
     }
-    //FIXME
+
     it("/quote (POST - insert)") {
-      val request: Request[IO] = Request[IO](method = Method.GET, uri = Uri.uri("/status"))
+      val q: Quote = Quote(0L, "XXXX", "XXXX", None, None)
+      val request: Request[IO] = Request[IO](method = Method.POST, uri = Uri.uri("/quote")).withEntity(q)
       val response: Response[IO] = service(hp).run(request).unsafeRunSync()
 
       assert(response.status === Status.Ok)
-      assert(response.as[ServerInfo].map(_.isOk).unsafeRunSync())
+      assert(response.as[Quote].unsafeRunSync()===q.copy(id=123L))
     }
-    //FIXME
+
     it("/quote (POST - update)") {
-      val request: Request[IO] = Request[IO](method = Method.GET, uri = Uri.uri("/status"))
+      val q: Quote = Quote(3L, "XXXX", "XXXX", None, None)
+      val request: Request[IO] = Request[IO](method = Method.POST, uri = Uri.uri("/quote")).withEntity(q)
       val response: Response[IO] = service(hp).run(request).unsafeRunSync()
 
       assert(response.status === Status.Ok)
-      assert(response.as[ServerInfo].map(_.isOk).unsafeRunSync())
+      assert(response.as[Quote].unsafeRunSync()===q)
     }
 
     it("/quote/1 (DELETE)") {
