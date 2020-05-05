@@ -18,6 +18,8 @@ import scala.util.{Failure, Success, Try}
 abstract class DbIntegrationSpec extends FunSpec with BeforeAndAfterAll with Matchers with doobie.scalatest.IOChecker {
   val POSTGRES_DOCKER_IMAGE = "postgres:12.2"
 
+  val DB_HOSTNAME: String = Option(System.getProperty("db.hostname")).getOrElse("localhost")
+
   override val colors: Colors.Ansi.type = doobie.util.Colors.Ansi // just for docs
   implicit val cs: ContextShift[IO] = IO.contextShift(ExecutionContexts.synchronous)
 
@@ -29,7 +31,7 @@ abstract class DbIntegrationSpec extends FunSpec with BeforeAndAfterAll with Mat
   val password = "password"
   val database = "deepfijdb"
   val driver = "org.postgresql.Driver"
-  lazy val url: String = s"jdbc:postgresql://localhost:$port/$database"
+  lazy val url: String = s"jdbc:postgresql://$DB_HOSTNAME:$port/$database"
 
   def dockerClient(): IO[DefaultDockerClient] = IO {
     DefaultDockerClient.fromEnv().build()
@@ -42,7 +44,7 @@ abstract class DbIntegrationSpec extends FunSpec with BeforeAndAfterAll with Mat
       .listContainers(ListContainersParam.allContainers(true))
       .asScala
       .toList
-      .filter(_.names().contains(containerName))
+      .filter(_.names().contains(s"/$containerName"))
       .foreach(c => {
         println(s"Killing and removing ${c.id()}")
         docker.killContainer(c.id())
